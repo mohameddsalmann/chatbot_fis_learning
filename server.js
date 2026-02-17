@@ -1325,7 +1325,7 @@ app.post("/api/doc-to-video", videoRateLimiter, upload.single("document"), async
 
         const jobId = createJobId();
 
-        videoJobs.set(jobId, {
+        setJob(jobId, {
 
             status: "processing",
 
@@ -1375,7 +1375,7 @@ app.post("/api/doc-to-video", videoRateLimiter, upload.single("document"), async
 
             logJobEvent(jobId, "job_failed", { error: err.message, duration: Date.now() - startTime });
 
-            videoJobs.set(jobId, {
+            setJob(jobId, {
 
                 ...videoJobs.get(jobId),
 
@@ -1431,7 +1431,7 @@ async function processVideoJob(jobId, pdfBuffer, options) {
 
         job.progress = "Extracting PDF text...";
 
-        videoJobs.set(jobId, job);
+        setJob(jobId, job);
 
 
 
@@ -1459,7 +1459,7 @@ async function processVideoJob(jobId, pdfBuffer, options) {
 
             : "Generating summary script...";
 
-        videoJobs.set(jobId, job);
+        setJob(jobId, job);
 
 
 
@@ -1601,7 +1601,7 @@ async function processVideoJob(jobId, pdfBuffer, options) {
 
         job.progress = `Creating ${apiType === "expressives" ? "Expressive V4" : "Full-HD"} video...`;
 
-        videoJobs.set(jobId, job);
+        setJob(jobId, job);
 
 
 
@@ -1723,7 +1723,7 @@ async function processVideoJob(jobId, pdfBuffer, options) {
 
         job.progress = "Waiting for D-ID to render video...";
 
-        videoJobs.set(jobId, job);
+        setJob(jobId, job);
 
 
 
@@ -1777,7 +1777,7 @@ async function processVideoJob(jobId, pdfBuffer, options) {
 
                     job.completed_at = new Date().toISOString();
 
-                    videoJobs.set(jobId, job);
+                    setJob(jobId, job);
 
                     return;
 
@@ -1797,7 +1797,7 @@ async function processVideoJob(jobId, pdfBuffer, options) {
 
                 job.progress = `Rendering video... (${pollAttempts * 2}s elapsed)`;
 
-                videoJobs.set(jobId, job);
+                setJob(jobId, job);
 
 
 
@@ -1825,7 +1825,7 @@ async function processVideoJob(jobId, pdfBuffer, options) {
 
         job.failed_at = new Date().toISOString();
 
-        videoJobs.set(jobId, job);
+        setJob(jobId, job);
 
         throw err;
 
