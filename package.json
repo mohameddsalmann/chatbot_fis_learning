@@ -8,13 +8,17 @@
     "dev": "node --watch server.js"
   },
   "dependencies": {
+    "@google/genai": "^1.41.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
+    "form-data": "^4.0.0",
     "helmet": "^8.0.0",
     "multer": "^1.4.5-lts.1",
     "openai": "^4.77.0",
-    "undici": "^6.23.0"
+    "pdf-parse": "^1.1.4",
+    "undici": "^6.23.0",
+    "ws": "^8.19.0"
   }
 }

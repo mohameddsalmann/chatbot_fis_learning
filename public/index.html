@@ -114,20 +114,14 @@
             </button>
             <input type="file" id="fileInput" accept="image/*" style="display:none" />
             <textarea id="chatInput" placeholder="Message FISChat…" rows="1"></textarea>
-            <div class="stt-wrapper">
-              <button class="icon-btn stt-btn" id="sttBtn" title="Speech tools">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" y1="19" x2="12" y2="23" />
-                  <line x1="8" y1="23" x2="16" y2="23" />
-                </svg>
-              </button>
-              <div class="stt-menu" id="sttMenu">
-                <button data-action="stt">🎙️ Speech → Text</button>
-                <button data-action="tts">🔊 Text → Speech</button>
-              </div>
-            </div>
+            <button class="icon-btn voice-btn" id="voiceBtn" title="Voice settings">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
             <button class="icon-btn video-btn" id="videoBtn" title="Generate video">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="23 7 16 12 23 17 23 7" />
@@ -146,6 +140,88 @@
       </div>
     </main>
 
+    <!-- ─── VOICE MODAL (Grok-style) ───────────────────────────── -->
+    <div class="modal-overlay" id="voiceModal">
+      <div class="voice-modal">
+        <div class="voice-modal-header">
+          <div class="voice-title">
+            <h3>Voice</h3>
+            <span class="voice-badge" id="voiceProviderBadge">Gemini Live</span>
+          </div>
+          <button class="icon-btn" id="voiceModalClose">&times;</button>
+        </div>
+
+        <div class="voice-modal-body">
+          <label class="voice-label">Select Voice</label>
+          <div class="voice-grid" id="voiceGrid">
+            <div class="voice-card selected" data-voice="alloy">
+              <div class="voice-name">Alloy</div>
+              <div class="voice-desc">Neutral • Clear</div>
+            </div>
+            <div class="voice-card" data-voice="echo">
+              <div class="voice-name">Echo</div>
+              <div class="voice-desc">Warm • Male</div>
+            </div>
+            <div class="voice-card" data-voice="fable">
+              <div class="voice-name">Fable</div>
+              <div class="voice-desc">British • Expressive</div>
+            </div>
+            <div class="voice-card" data-voice="onyx">
+              <div class="voice-name">Onyx</div>
+              <div class="voice-desc">Deep • Male</div>
+            </div>
+            <div class="voice-card" data-voice="nova">
+              <div class="voice-name">Nova</div>
+              <div class="voice-desc">Energetic • Female</div>
+            </div>
+            <div class="voice-card" data-voice="shimmer">
+              <div class="voice-name">Shimmer</div>
+              <div class="voice-desc">Soft • Female</div>
+            </div>
+          </div>
+
+          <label class="voice-label">Personality</label>
+          <select id="personalitySelect" class="voice-select">
+            <option value="assistant">🤖 Assistant</option>
+            <option value="teacher">👨‍🏫 Teacher</option>
+            <option value="friend">😊 Friend</option>
+            <option value="professional">💼 Professional</option>
+          </select>
+
+          <label class="voice-label">Speed <span id="speedVal">1.0x</span></label>
+          <input type="range" id="speedSlider" class="voice-slider" min="0.5" max="2.0" step="0.1" value="1.0" />
+
+          <label class="voice-label">Provider</label>
+          <select id="voiceProvider" class="voice-select">
+            <option value="gemini">⚡ Gemini (faster, cheaper)</option>
+            <option value="openai">🎧 OpenAI (higher quality)</option>
+          </select>
+
+          <div class="voice-status" id="voiceStatus">
+            <div class="voice-indicator"></div>
+            <span id="voiceStatusText">Click mic to start speaking</span>
+            <span class="voice-timer" id="voiceTimer">00:00</span>
+          </div>
+
+          <div class="voice-transcripts" id="voiceTranscripts">
+            <div class="voice-transcript" id="userTranscript">You: …</div>
+            <div class="voice-transcript" id="aiTranscript">AI: …</div>
+          </div>
+        </div>
+        <div class="voice-modal-footer">
+          <button class="btn-secondary" id="voiceEndBtn">End conversation</button>
+          <button class="voice-mic-btn" id="voiceMicBtn">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ─── VIDEO GENERATION MODAL ──────────────────────────── -->
     <div class="modal-overlay" id="videoModal">
       <div class="modal">
@@ -157,34 +233,90 @@
           <label class="modal-label">Select Avatar</label>
           <div class="avatar-grid" id="avatarGrid">
             <div class="avatar-card selected" data-avatar="professional">
+              <img src="img/avatars/professional.png" alt="Professional" class="avatar-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
               <div class="avatar-placeholder" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">👤</div>
               <span>Professional</span>
             </div>
             <div class="avatar-card" data-avatar="casual">
+              <img src="img/avatars/casual.png" alt="Casual" class="avatar-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
               <div class="avatar-placeholder" style="background:linear-gradient(135deg,#ec4899,#f43f5e)">🧑</div>
               <span>Casual</span>
             </div>
             <div class="avatar-card" data-avatar="cartoon">
+              <img src="img/avatars/cartoon.png" alt="Cartoon" class="avatar-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
               <div class="avatar-placeholder" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">🤖</div>
               <span>Cartoon</span>
             </div>
             <div class="avatar-card" data-avatar="anime">
+              <img src="img/avatars/anime.png" alt="Anime" class="avatar-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
               <div class="avatar-placeholder" style="background:linear-gradient(135deg,#14b8a6,#06b6d4)">🎭</div>
               <span>Anime</span>
             </div>
             <div class="avatar-card" data-avatar="realistic">
+              <img src="img/avatars/realistic.png" alt="Realistic" class="avatar-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
               <div class="avatar-placeholder" style="background:linear-gradient(135deg,#a855f7,#6366f1)">🧔</div>
               <span>Realistic</span>
             </div>
             <div class="avatar-card" data-avatar="minimal">
+              <img src="img/avatars/minimal.png" alt="Minimal" class="avatar-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
               <div class="avatar-placeholder" style="background:linear-gradient(135deg,#22c55e,#10b981)">😊</div>
               <span>Minimal</span>
             </div>
           </div>
-          <label class="modal-label" for="videoPrompt">Prompt</label>
-          <textarea id="videoPrompt" class="modal-textarea" placeholder="Describe what the avatar should say or do…"
-            rows="4"></textarea>
+          <label class="modal-label">Video Quality</label>
+          <div class="api-type-selector">
+            <label class="api-type-option">
+              <input type="radio" name="apiType" value="clips" checked />
+              <div class="api-type-card">
+                <div class="api-type-title">🎬 Full-HD (Clips)</div>
+                <div class="api-type-desc">High-quality 1080p with body movements • 15-45s processing</div>
+              </div>
+            </label>
+            <label class="api-type-option">
+              <input type="radio" name="apiType" value="expressives" />
+              <div class="api-type-card">
+                <div class="api-type-title">🎭 Expressive (V4)</div>
+                <div class="api-type-desc">Emotional avatars with sentiments • 1-5min processing</div>
+              </div>
+            </label>
+          </div>
+
+          <div id="sentimentSelector" class="sentiment-selector" style="display:none">
+            <label class="modal-label">Emotion/Sentiment</label>
+            <select id="sentimentSelect" class="modal-select">
+              <option value="professional">Professional</option>
+              <option value="empathetic">Empathetic</option>
+              <option value="excited">Excited</option>
+              <option value="friendly">Friendly</option>
+              <option value="serious">Serious</option>
+              <option value="calm">Calm</option>
+            </select>
+          </div>
+
+          <label class="modal-label" for="docUpload">Upload PDF lecture/lesson</label>
+          <div class="file-drop-area" id="fileDropArea">
+            <span class="file-icon">📄</span>
+            <span class="file-msg">Drag & drop or click to upload PDF</span>
+            <span class="file-sub">Max 10MB • Text will be summarized or explained</span>
+            <input type="file" id="docUpload" accept="application/pdf" class="file-input" />
+          </div>
+          <div id="fileSelectedName" class="file-selected-name" style="display:none"></div>
+
+          <label class="modal-label" for="videoCategory">Content Style</label>
+          <select id="videoCategory" class="modal-select">
+            <option value="summarize">Summarize</option>
+            <option value="explanation">Explanation</option>
+          </select>
+
+          <div id="videoResult" class="video-result" style="display:none"></div>
         </div>
+
         <div class="modal-footer">
           <button class="btn-secondary" id="videoModalCancel">Cancel</button>
           <button class="btn-primary" id="videoGenerate">Generate Video</button>
